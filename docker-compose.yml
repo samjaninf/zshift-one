@@ -1,0 +1,29 @@
+version: '2'
+services:
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_USER: zammad
+      MYSQL_PASSWORD: Temple_46
+      MYSQL_DATABASE: zammad  
+  zammad:
+    build: .
+    restart: always
+    links:
+      - mariadb
+    ports: 
+      - 80:80
+    environment:
+      DB_HOST: mariadb
+      DB_DATABASE: triangle
+      DB_USERNAME: triangle
+      DB_PASSWORD: Temple_46
+      ZAMMAD_DIR: /home/zammad
+      RAILS_ENV: production
+      RAILS_SERVER: puma
+      GIT_URL: https://github.com/zammad/zammad.git
+      GIT_BRANCH: stable

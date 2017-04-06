@@ -1,0 +1,56 @@
+FROM ruby:2.3.1
+#MAINTAINER Zammad <info@zammad.org>
+#ARG BUILD_DATE
+
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANGUAGE "en_US.UTF-8"
+
+RUN echo "force-unsafe-io" > /etc/dpkg/dpkg.cfg.d/02apt-speedup
+
+RUN echo "Acquire::http {No-Cache=True;};" > /etc/apt/apt.conf.d/no-cache
+
+
+# install dependencies
+RUN apt-get update && apt-get install -y apt-transport-https build-essential git-core libpq5 libpq-dev locales wget ca-certificates \
+        --no-install-recommends && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+
+COPY ./zammad.list /etc/apt/sources.list.d/zammad.list
+
+RUN locale-gen en_US en_US.UTF-8
+RUN dpkg-reconfigure locales
+#RUN echo "LANG=en_US.UTF-8" > /etc/default/locale
+RUN echo 'LANGUAGE="en_US.UTF-8"' >> /etc/default/locale
+RUN echo 'LC_ALL="en_US.UTF-8"' >> /etc/default/locale
+RUN echo 'LANG="en_US"' >> /etc/default/locale
+
+RUN wget -qO - https://deb.packager.io/key | apt-key add -
+
+RUN apt-get update && apt-get install -y zammad \
+        --no-install-recommends && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+#WORKDIR /home
+#RUN git clone --depth 1 -b "${GIT_BRANCH}" "${GIT_URL}"
+
+#RUN useradd -M -d "${ZAMMAD_DIR}" -s /bin/bash zammad
+
+#WORKDIR /home/zammad
+#RUN bundle install --without test postgresql development
+
+# install zammad
+COPY ./setup-zammad.sh /tmp/setup-zammad.sh
+#RUN chown zammad:zammad /tmp/setup-zammad.sh; chmod +x /tmp/setup-zammad.sh
+
+# cleanup
+#RUN apt-get remove --purge -y build-essential bzip2 git-core libffi-dev libgdbm3 libssl-dev procps zlib1g-dev && \
+#    apt-get autoremove -y && \
+#    rm -rf /var/lib/apt/lists/*
+
+EXPOSE 80
+USER root
+ENTRYPOINT ["/tmp/setup-zammad.sh"]

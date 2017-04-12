@@ -2,7 +2,7 @@ FROM ruby:2.3.1
 MAINTAINER Zammad.org <info@zammad.org>
 ARG BUILD_DATE
 
-#ENV ZAMMAD_DIR /opt/zammad
+ENV ZAMMAD_DIR /opt/zammad
 #ENV ZAMMAD_ES_URL elasticsearch
 #ENV ZAMMAD_DB_HOST mariadb
 #ENV ZAMMAD_DB zammad

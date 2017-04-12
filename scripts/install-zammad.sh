@@ -33,7 +33,7 @@ apt-get --no-install-recommends install -q -y postfix
 #echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-5.x.list
 
 # updating package list again
-apt-get update
+#apt-get update
 
 # install elasticsearch & attachment plugin
 update-ca-certificates -f

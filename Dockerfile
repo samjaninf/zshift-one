@@ -36,6 +36,7 @@ EXPOSE 80
 
 # fixing service start
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+RUN echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4
 # See if backports in the right place
 RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list
 

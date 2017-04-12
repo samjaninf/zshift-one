@@ -2,14 +2,16 @@ FROM ruby:2.3.1
 MAINTAINER Zammad.org <info@zammad.org>
 ARG BUILD_DATE
 
-ENV ZAMMAD_DIR /opt/zammad
-ENV ZAMMAD_DB zammad
-ENV ZAMMAD_DB_USER zammad
-ENV RAILS_ENV production
-ENV RAILS_SERVER puma
-ENV GIT_URL https://github.com/zammad/zammad.git
-ENV GIT_BRANCH develop
-ENV ES_SKIP_SET_KERNEL_PARAMETERS true
+#ENV ZAMMAD_DIR /opt/zammad
+#ENV ZAMMAD_ES_URL elasticsearch
+#ENV ZAMMAD_DB_HOST mariadb
+#ENV ZAMMAD_DB zammad
+#ENV ZAMMAD_DB_USER zammad
+#ENV RAILS_ENV production
+#ENV RAILS_SERVER puma
+#ENV GIT_URL https://github.com/zammad/zammad.git
+#ENV GIT_BRANCH develop
+#ENV ES_SKIP_SET_KERNEL_PARAMETERS true
 
 LABEL org.label-schema.build-date="$BUILD_DATE" \
       org.label-schema.name="Zammad" \
@@ -19,8 +21,9 @@ LABEL org.label-schema.build-date="$BUILD_DATE" \
       org.label-schema.vcs-url="https://github.com/zammad/zammad" \
       org.label-schema.vcs-type="Git" \
       org.label-schema.vendor="Zammad" \
-      org.label-schema.schema-version="1.2" \
-      org.label-schema.docker.cmd="docker run -ti -p 80:80 zammad/zammad"
+      org.label-schema.schema-version="1.2"
+      # \
+      #org.label-schema.docker.cmd="docker run -ti -p 80:80 zammad/zammad"
 
 # Expose ports
 EXPOSE 80

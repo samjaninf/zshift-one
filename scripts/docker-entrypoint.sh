@@ -5,8 +5,8 @@ set -e
 if [ "$1" = 'zammad' ]; then
 
   # starting services
-  service postgresql start
-  service elasticsearch start
+  #service postgresql start
+  #service elasticsearch start
   service postfix start
   service nginx start
 

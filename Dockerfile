@@ -32,7 +32,7 @@ LABEL org.label-schema.build-date="$BUILD_DATE" \
 EXPOSE 80
 
 # adding backport (openjdk)
-RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list
+RUN echo "deb http://ftp.de.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list
 
 # fixing service start
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d

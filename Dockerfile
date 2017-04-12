@@ -36,6 +36,8 @@ EXPOSE 80
 
 # fixing service start
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+# See if backports in the right place
+RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list
 
 # install zammad
 COPY scripts/install-zammad.sh /tmp

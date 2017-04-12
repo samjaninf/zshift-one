@@ -6,7 +6,6 @@ set -ex
 export DEBIAN_FRONTEND=noninteractive
 
 # adding backport (openjdk)
-echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list
 
 # updating package list
 apt-get update

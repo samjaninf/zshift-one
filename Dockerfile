@@ -32,7 +32,7 @@ LABEL org.label-schema.build-date="$BUILD_DATE" \
 EXPOSE 80
 
 # adding backport (openjdk)
-RUN echo "deb http://ftp.de.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list
+#RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list
 
 # fixing service start
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
@@ -44,12 +44,12 @@ RUN chmod +x /tmp/install-zammad.sh;/bin/bash -l -c /tmp/install-zammad.sh
 # cleanup
 RUN rm -rf /var/lib/apt/lists/* preseed.txt
 # install dependencies
-RUN apt-get update && apt-get --no-install-recommends -y install apt-transport-https libterm-readline-perl-perl locales mc net-tools nginx openjdk-8-jre openjdk-8-jre-headless="$JAVA_DEBIAN_VERSION" ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION"
+#RUN apt-get update && apt-get --no-install-recommends -y install apt-transport-https libterm-readline-perl-perl locales mc net-tools nginx openjdk-8-jre openjdk-8-jre-headless="$JAVA_DEBIAN_VERSION" ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION"
 
 # install postfix
-RUN echo "postfix postfix/main_mailer_type string Internet site" > preseed.txt
-RUN debconf-set-selections preseed.txt
-RUN apt-get --no-install-recommends install -q -y postfix
+#RUN echo "postfix postfix/main_mailer_type string Internet site" > preseed.txt
+#RUN debconf-set-selections preseed.txt
+#RUN apt-get --no-install-recommends install -q -y postfix
 
 # docker init
 COPY scripts/docker-entrypoint.sh /

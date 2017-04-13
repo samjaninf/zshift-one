@@ -6,25 +6,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV ZAMMAD_DIR /opt/zammad
 ENV JAVA_DEBIAN_VERSION "8u121-b13-1~bpo8+1"
 ENV CA_CERTIFICATES_JAVA_VERSION "20161107~bpo8+1"
-ENV ZAMMAD_ES_URL zamma-elasticsearch-openshift
-#ENV ZAMMAD_DB_HOST mariadb
-#ENV ZAMMAD_DB zammad
-#ENV ZAMMAD_DB_USER zammad
-#ENV ZAMMAD_DB_PASS 01BryTEX8HbQJhxK
-#ENV RAILS_ENV production
+ENV RAILS_ENV production
 ENV RAILS_SERVER puma
 ENV GIT_URL https://github.com/zammad/zammad.git
 ENV GIT_BRANCH develop
 ENV ES_SKIP_SET_KERNEL_PARAMETERS true
-#ENV ZAMMAD_ES_URL elasticsearch
-#ENV ZAMMAD_DB_HOST mariadb
-#ENV ZAMMAD_DB zammad
-#ENV ZAMMAD_DB_USER zammad
-#ENV RAILS_ENV production
-#ENV RAILS_SERVER puma
-#ENV GIT_URL https://github.com/zammad/zammad.git
-#ENV GIT_BRANCH develop
-#ENV ES_SKIP_SET_KERNEL_PARAMETERS true
 
 LABEL org.label-schema.build-date="$BUILD_DATE" \
       org.label-schema.name="Zammad" \

@@ -10,34 +10,34 @@ if [ "$1" = 'zammad' ]; then
 
   # wait for postgres processe coming up
   #until su - postgres -c 'psql -c "select version()"' &> /dev/null; do
-  #until 
+  #until
   #  echo "waiting for postgres to be ready..."
   #  sleep 2
   #done
-  
-  
-  until $(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h${ZAMMAD_DB} "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${ZAMMAD_DB}'" information_schema); do
+
+
+  until $(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h ${ZAMMAD_DB_HOST} "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${ZAMMAD_DB}'" information_schema); do
     echo "=> Waiting for MariaDB to be ready..."
   done
-  local tableExists=$(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h${ZAMMAD_DB} "SELECT * FROM information_schema.tables WHERE table_schema = '${ZAMMAD_DB}' AND table_name = 'users'")
+  export tableExists=$(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h ${ZAMMAD_DB_HOST} "SELECT * FROM information_schema.tables WHERE table_schema = '${ZAMMAD_DB}' AND table_name = 'users'")
   if [[ -z "${tableExists}" ]]; then
     sed -e "s#production:#${RAILS_ENV}:#" -e "s#.*adapter:.*#  adapter: mysql2#" -e "s#.*username:.*#  username: ${ZAMMAD_DB_USER}#" -e "s#.*password:.*#  password: ${ZAMMAD_DB_PASS}#" -e "s#.*database:.*#  database: ${ZAMMAD_DB}\n  host: ${ZAMMAD_DB_HOST}#" < ${ZAMMAD_DIR}/config/database.yml.pkgr > ${ZAMMAD_DIR}/config/database.yml
 
     # populate database
     bundle exec rake db:migrate
     bundle exec rake db:seed
-    
+
     # assets precompile
     bundle exec rake assets:precompile
-    
+
     # delete assets precompile cache
     rm -r tmp/cache
-    
+
     # create es searchindex
     # bundle exec rails r "Setting.set('es_url', 'http://localhost:9200')"
     bundle exec rails r "Setting.set('es_url', '${ZAMMAD_ES_URL}:9200')"
     bundle exec rake searchindex:rebuild
-    
+
     # copy nginx zammad config
     cp ${ZAMMAD_DIR}/contrib/nginx/zammad.conf /etc/nginx/sites-enabled/zammad.conf
   fi

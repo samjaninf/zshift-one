@@ -21,13 +21,17 @@ if [ "$1" = 'zammad' ]; then
   done
   export tableExists=$(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h ${ZAMMAD_DB_HOST} "SELECT * FROM information_schema.tables WHERE table_schema = '${ZAMMAD_DB}' AND table_name = 'users'")
   if [[ -z "${tableExists}" ]]; then
+    echo "==> Configuring Zammad for production please wait..."
     sed -e "s#production:#${RAILS_ENV}:#" -e "s#.*adapter:.*#  adapter: mysql2#" -e "s#.*username:.*#  username: ${ZAMMAD_DB_USER}#" -e "s#.*password:.*#  password: ${ZAMMAD_DB_PASS}#" -e "s#.*database:.*#  database: ${ZAMMAD_DB}\n  host: ${ZAMMAD_DB_HOST}#" < ${ZAMMAD_DIR}/config/database.yml.pkgr > ${ZAMMAD_DIR}/config/database.yml
     cd ${ZAMMAD_DIR}
     # populate database
+    echo "==> Running db:migrate..."
     bundle exec rake db:migrate
+    echo "==> Running db:seed..."
     bundle exec rake db:seed
 
     # assets precompile
+    echo "==> Running assets:precompile..."
     bundle exec rake assets:precompile
 
     # delete assets precompile cache
@@ -35,6 +39,7 @@ if [ "$1" = 'zammad' ]; then
 
     # create es searchindex
     # bundle exec rails r "Setting.set('es_url', 'http://localhost:9200')"
+    echo "==> Running assets:precompile..."
     bundle exec rails r "Setting.set('es_url', '${ZAMMAD_ES_URL}:9200')"
     bundle exec rake searchindex:rebuild
 

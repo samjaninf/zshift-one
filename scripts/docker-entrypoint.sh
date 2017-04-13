@@ -39,8 +39,8 @@ if [ "$1" = 'zammad' ]; then
 
     # create es searchindex
     # bundle exec rails r "Setting.set('es_url', 'http://localhost:9200')"
-    echo "==> Running assets:precompile..."
-    bundle exec rails r "Setting.set('es_url', '${ZAMMAD_ES_URL}:9200')"
+    echo "==> Running searchindex:rebuild..."
+    bundle exec rails r "Setting.set('es_url', 'http://${ZAMMAD_ES_URL}:9200')"
     bundle exec rake searchindex:rebuild
 
     # copy nginx zammad config

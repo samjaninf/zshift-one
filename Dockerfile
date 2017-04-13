@@ -3,7 +3,7 @@ MAINTAINER Zammad.org <info@zammad.org>
 ARG BUILD_DATE
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV ZAMMAD_DIR /opt/zammad
+ENV ZAMMAD_DIR /home/zammad
 ENV JAVA_DEBIAN_VERSION "8u121-b13-1~bpo8+1"
 ENV CA_CERTIFICATES_JAVA_VERSION "20161107~bpo8+1"
 ENV RAILS_ENV production
@@ -42,13 +42,6 @@ RUN chmod +x /tmp/install-zammad.sh;/bin/bash -l -c /tmp/install-zammad.sh
 
 # cleanup
 RUN rm -rf /var/lib/apt/lists/* preseed.txt
-# install dependencies
-#RUN apt-get update && apt-get --no-install-recommends -y install apt-transport-https libterm-readline-perl-perl locales mc net-tools nginx openjdk-8-jre openjdk-8-jre-headless="$JAVA_DEBIAN_VERSION" ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION"
-
-# install postfix
-#RUN echo "postfix postfix/main_mailer_type string Internet site" > preseed.txt
-#RUN debconf-set-selections preseed.txt
-#RUN apt-get --no-install-recommends install -q -y postfix
 
 # docker init
 COPY scripts/docker-entrypoint.sh /

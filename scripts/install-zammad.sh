@@ -45,24 +45,24 @@ update-ca-certificates -f
 useradd -M -d "${ZAMMAD_DIR}" -s /bin/bash zammad
 
 # git clone zammad
-#cd "$(dirname "${ZAMMAD_DIR}")"
-#git clone "${GIT_URL}"
+cd "$(dirname "${ZAMMAD_DIR}")"
+git clone "${GIT_URL}"
 
 # switch to git branch
-#cd "${ZAMMAD_DIR}"
-#git checkout "${GIT_BRANCH}"
+cd "${ZAMMAD_DIR}"
+git checkout "${GIT_BRANCH}"
 
 # install zammad
-#if [ "${RAILS_ENV}" == "production" ]; then
+if [ "${RAILS_ENV}" == "production" ]; then
   # bundle install --without test development mysql
-#  bundle install --without test development postgres
-#elif [ "${RAILS_ENV}" == "development" ]; then
+  bundle install --without test development postgres
+elif [ "${RAILS_ENV}" == "development" ]; then
   # bundle install --without mysql
-#  bundle install --without postgres
-#fi
+  bundle install --without postgres
+fi
 
 # fetch locales
-#contrib/packager.io/fetch_locales.rb
+contrib/packager.io/fetch_locales.rb
 
 # create db & user
 #ZAMMAD_DB_PASS="$(tr -dc A-Za-z0-9 < /dev/urandom | head -c10)"

@@ -7,14 +7,46 @@ if [ "$1" = 'zammad' ]; then
   # starting services
   #service postgresql start
   #service elasticsearch start
+
+  # wait for postgres processe coming up
+  #until su - postgres -c 'psql -c "select version()"' &> /dev/null; do
+  #until 
+  #  echo "waiting for postgres to be ready..."
+  #  sleep 2
+  #done
+  
+  
+  until $(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h${ZAMMAD_DB} "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${ZAMMAD_DB}'" information_schema); do
+    echo "=> Waiting for MariaDB to be ready..."
+  done
+  local tableExists=$(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h${ZAMMAD_DB} "SELECT * FROM information_schema.tables WHERE table_schema = '${ZAMMAD_DB}' AND table_name = 'users'")
+  if [[ -z "${tableExists}" ]]; then
+    sed -e "s#production:#${RAILS_ENV}:#" -e "s#.*adapter:.*#  adapter: mysql2#" -e "s#.*username:.*#  username: ${ZAMMAD_DB_USER}#" -e "s#.*password:.*#  password: ${ZAMMAD_DB_PASS}#" -e "s#.*database:.*#  database: ${ZAMMAD_DB}\n  host: ${ZAMMAD_DB_HOST}#" < ${ZAMMAD_DIR}/config/database.yml.pkgr > ${ZAMMAD_DIR}/config/database.yml
+
+    # populate database
+    bundle exec rake db:migrate
+    bundle exec rake db:seed
+    
+    # assets precompile
+    bundle exec rake assets:precompile
+    
+    # delete assets precompile cache
+    rm -r tmp/cache
+    
+    # create es searchindex
+    # bundle exec rails r "Setting.set('es_url', 'http://localhost:9200')"
+    bundle exec rails r "Setting.set('es_url', '${ZAMMAD_ES_URL}:9200')"
+    bundle exec rake searchindex:rebuild
+    
+    # copy nginx zammad config
+    cp ${ZAMMAD_DIR}/contrib/nginx/zammad.conf /etc/nginx/sites-enabled/zammad.conf
+  fi
+
   service postfix start
   service nginx start
 
-  # wait for postgres processe coming up
-  until su - postgres -c 'psql -c "select version()"' &> /dev/null; do
-    echo "waiting for postgres to be ready..."
-    sleep 2
-  done
+# set user & group to zammad
+chown -R zammad:zammad "${ZAMMAD_DIR}"
 
   cd ${ZAMMAD_DIR}
   echo "starting zammad...."
@@ -34,8 +66,8 @@ if [ "$1" = 'zammad' ]; then
   done
 
   # show url
-  echo -e "\nZammad is ready! Visit http://localhost in your browser!"
-  echo -e "If you like to use Zammad from somewhere else edit servername directive in /etc/nginx/sites-enabled/zammad.conf!\n"
+  echo -e "==> \nZammad is ready! Visit the url in your browser to configure!"
+  #echo -e "If you like to use Zammad from somewhere else edit servername directive in /etc/nginx/sites-enabled/zammad.conf!\n"
 
   # run shell
   /bin/bash

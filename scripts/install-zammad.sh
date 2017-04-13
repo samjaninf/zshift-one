@@ -20,7 +20,7 @@ apt-get --no-install-recommends -y install apt-transport-https libterm-readline-
 # install postfix
 echo "postfix postfix/main_mailer_type string Internet site" > preseed.txt
 debconf-set-selections preseed.txt
-apt-get --no-install-recommends install -q -y postfix
+apt-get --no-install-recommends install -q -y postfix mysql-client
 
 # install postgresql server
 #locale-gen en_US.UTF-8
@@ -45,24 +45,24 @@ update-ca-certificates -f
 useradd -M -d "${ZAMMAD_DIR}" -s /bin/bash zammad
 
 # git clone zammad
-cd "$(dirname "${ZAMMAD_DIR}")"
-git clone "${GIT_URL}"
+#cd "$(dirname "${ZAMMAD_DIR}")"
+#git clone "${GIT_URL}"
 
 # switch to git branch
-cd "${ZAMMAD_DIR}"
-git checkout "${GIT_BRANCH}"
+#cd "${ZAMMAD_DIR}"
+#git checkout "${GIT_BRANCH}"
 
 # install zammad
-if [ "${RAILS_ENV}" == "production" ]; then
+#if [ "${RAILS_ENV}" == "production" ]; then
   # bundle install --without test development mysql
-  bundle install --without test development postgres
-elif [ "${RAILS_ENV}" == "development" ]; then
+#  bundle install --without test development postgres
+#elif [ "${RAILS_ENV}" == "development" ]; then
   # bundle install --without mysql
-  bundle install --without postgres
-fi
+#  bundle install --without postgres
+#fi
 
 # fetch locales
-contrib/packager.io/fetch_locales.rb
+#contrib/packager.io/fetch_locales.rb
 
 # create db & user
 #ZAMMAD_DB_PASS="$(tr -dc A-Za-z0-9 < /dev/urandom | head -c10)"
@@ -72,25 +72,25 @@ contrib/packager.io/fetch_locales.rb
 
 # create database.yml
 # sed -e "s#production:#${RAILS_ENV}:#" -e "s#.*adapter:.*#  adapter: postgresql#" -e "s#.*username:.*#  username: ${ZAMMAD_DB_USER}#" -e "s#.*password:.*#  password: ${ZAMMAD_DB_PASS}#" -e "s#.*database:.*#  database: ${ZAMMAD_DB}\n  host: localhost#" < ${ZAMMAD_DIR}/config/database.yml.pkgr > ${ZAMMAD_DIR}/config/database.yml
-sed -e "s#production:#${RAILS_ENV}:#" -e "s#.*adapter:.*#  adapter: mysql2#" -e "s#.*username:.*#  username: ${ZAMMAD_DB_USER}#" -e "s#.*password:.*#  password: ${ZAMMAD_DB_PASS}#" -e "s#.*database:.*#  database: ${ZAMMAD_DB}\n  host: ${ZAMMAD_DB_HOST}#" < ${ZAMMAD_DIR}/config/database.yml.pkgr > ${ZAMMAD_DIR}/config/database.yml
+#sed -e "s#production:#${RAILS_ENV}:#" -e "s#.*adapter:.*#  adapter: mysql2#" -e "s#.*username:.*#  username: ${ZAMMAD_DB_USER}#" -e "s#.*password:.*#  password: ${ZAMMAD_DB_PASS}#" -e "s#.*database:.*#  database: ${ZAMMAD_DB}\n  host: ${ZAMMAD_DB_HOST}#" < ${ZAMMAD_DIR}/config/database.yml.pkgr > ${ZAMMAD_DIR}/config/database.yml
 
 # populate database
-bundle exec rake db:migrate
-bundle exec rake db:seed
+#bundle exec rake db:migrate
+#bundle exec rake db:seed
 
 # assets precompile
-bundle exec rake assets:precompile
+#bundle exec rake assets:precompile
 
 # delete assets precompile cache
-rm -r tmp/cache
+#rm -r tmp/cache
 
 # create es searchindex
 # bundle exec rails r "Setting.set('es_url', 'http://localhost:9200')"
-bundle exec rails r "Setting.set('es_url', '${ZAMMAD_ES_URL}:9200')"
-bundle exec rake searchindex:rebuild
+#bundle exec rails r "Setting.set('es_url', '${ZAMMAD_ES_URL}:9200')"
+#bundle exec rake searchindex:rebuild
 
 # copy nginx zammad config
-cp ${ZAMMAD_DIR}/contrib/nginx/zammad.conf /etc/nginx/sites-enabled/zammad.conf
+#cp ${ZAMMAD_DIR}/contrib/nginx/zammad.conf /etc/nginx/sites-enabled/zammad.conf
 
 # set user & group to zammad
-chown -R zammad:zammad "${ZAMMAD_DIR}"
+#chown -R zammad:zammad "${ZAMMAD_DIR}"

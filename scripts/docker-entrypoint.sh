@@ -22,7 +22,7 @@ if [ "$1" = 'zammad' ]; then
   export tableExists=$(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h ${ZAMMAD_DB_HOST} "SELECT * FROM information_schema.tables WHERE table_schema = '${ZAMMAD_DB}' AND table_name = 'users'")
   if [[ -z "${tableExists}" ]]; then
     sed -e "s#production:#${RAILS_ENV}:#" -e "s#.*adapter:.*#  adapter: mysql2#" -e "s#.*username:.*#  username: ${ZAMMAD_DB_USER}#" -e "s#.*password:.*#  password: ${ZAMMAD_DB_PASS}#" -e "s#.*database:.*#  database: ${ZAMMAD_DB}\n  host: ${ZAMMAD_DB_HOST}#" < ${ZAMMAD_DIR}/config/database.yml.pkgr > ${ZAMMAD_DIR}/config/database.yml
-
+    cd ${ZAMMAD_DIR}
     # populate database
     bundle exec rake db:migrate
     bundle exec rake db:seed

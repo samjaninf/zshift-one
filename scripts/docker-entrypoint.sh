@@ -19,11 +19,11 @@ if [ "$1" = 'zammad' ]; then
   #until $(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h ${ZAMMAD_DB_HOST} "SELECT schema_name FROM information_schema.schemata WHERE SCHEMA_NAME = '${ZAMMAD_DB}'"); do
   #  echo "=> Waiting for MariaDB to be ready..."
   #done
+  cd ${ZAMMAD_DIR}
   export tableExists=$(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h ${ZAMMAD_DB_HOST} "SELECT * FROM information_schema.tables WHERE table_schema = '${ZAMMAD_DB}' AND table_name = 'users'")
   if [[ -z "${tableExists}" ]]; then
     echo "==> Configuring Zammad for production please wait..."
     sed -e "s#production:#${RAILS_ENV}:#" -e "s#.*adapter:.*#  adapter: mysql2#" -e "s#.*username:.*#  username: ${ZAMMAD_DB_USER}#" -e "s#.*password:.*#  password: ${ZAMMAD_DB_PASS}#" -e "s#.*database:.*#  database: ${ZAMMAD_DB}\n  host: ${ZAMMAD_DB_HOST}#" < ${ZAMMAD_DIR}/config/database.yml.pkgr > ${ZAMMAD_DIR}/config/database.yml
-    cd ${ZAMMAD_DIR}
     # populate database
     echo "==> Running db:migrate..."
     bundle exec rake db:migrate
@@ -47,14 +47,16 @@ if [ "$1" = 'zammad' ]; then
     cp ${ZAMMAD_DIR}/contrib/nginx/zammad.conf /etc/nginx/sites-enabled/zammad.conf
   fi
 
+  echo "===> Starting postfix...."
   service postfix start
+  echo "===> Starting nginx...."
   service nginx start
 
-# set user & group to zammad
-chown -R zammad:zammad "${ZAMMAD_DIR}"
+  # set user & group to zammad
+  chown -R zammad:zammad "${ZAMMAD_DIR}"
 
   cd ${ZAMMAD_DIR}
-  echo "starting zammad...."
+  echo "===> Starting zammad...."
   su -c "bundle exec script/websocket-server.rb -b 0.0.0.0 start &>> ${ZAMMAD_DIR}/log/zammad.log &" zammad
   su -c "bundle exec script/scheduler.rb start &>> ${ZAMMAD_DIR}/log/zammad.log &" zammad
 
@@ -66,15 +68,14 @@ chown -R zammad:zammad "${ZAMMAD_DIR}"
 
   # wait for zammad processe coming up
   until (echo > /dev/tcp/localhost/3000) &> /dev/null; do
-    echo "waiting for zammad to be ready..."
+    echo "==> waiting for zammad to be ready..."
     sleep 2
   done
 
   # show url
   echo -e "==> \nZammad is ready! Visit the url in your browser to configure!"
-  #echo -e "If you like to use Zammad from somewhere else edit servername directive in /etc/nginx/sites-enabled/zammad.conf!\n"
-
-  # run shell
   /bin/bash
+
+  tail -f ${ZAMMAD_DIR}/log/zammad.log
 
 fi

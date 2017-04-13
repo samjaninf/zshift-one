@@ -16,9 +16,9 @@ if [ "$1" = 'zammad' ]; then
   #done
 
 
-  until $(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h ${ZAMMAD_DB_HOST} "SELECT schema_name FROM information_schema.schemata WHERE SCHEMA_NAME = '${ZAMMAD_DB}'"); do
-    echo "=> Waiting for MariaDB to be ready..."
-  done
+  #until $(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h ${ZAMMAD_DB_HOST} "SELECT schema_name FROM information_schema.schemata WHERE SCHEMA_NAME = '${ZAMMAD_DB}'"); do
+  #  echo "=> Waiting for MariaDB to be ready..."
+  #done
   export tableExists=$(mysql -s -N -e -u${ZAMMAD_DB_USER} -p${ZAMMAD_DB_PASS} -h ${ZAMMAD_DB_HOST} "SELECT * FROM information_schema.tables WHERE table_schema = '${ZAMMAD_DB}' AND table_name = 'users'")
   if [[ -z "${tableExists}" ]]; then
     echo "==> Configuring Zammad for production please wait..."

@@ -90,7 +90,7 @@ contrib/packager.io/fetch_locales.rb
 #bundle exec rake searchindex:rebuild
 
 # copy nginx zammad config
-cp ${ZAMMAD_DIR}/contrib/nginx/zammad.conf /etc/nginx/sites-enabled/zammad.conf
+#cp ${ZAMMAD_DIR}/contrib/nginx/zammad.conf /etc/nginx/sites-enabled/zammad.conf
 
 # set user & group to zammad
 chown -R zammad:zammad "${ZAMMAD_DIR}"

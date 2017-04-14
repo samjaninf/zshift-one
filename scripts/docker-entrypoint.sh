@@ -47,12 +47,12 @@ if [ "$1" = 'zammad' ]; then
     cp ${ZAMMAD_DIR}/contrib/nginx/zammad.conf /etc/nginx/sites-enabled/zammad.conf
   fi
 
-  sed -i 's/server_name localhost;/server_name ${ZAMMAD_URL}/g' /etc/nginx/sites-enabled/zammad.conf
+  sed -e "s#.*server_name.*#    server_name ${ZAMMAD_URL};#" < ${ZAMMAD_DIR}/contrib/nginx/zammad.conf > /etc/nginx/sites-enabled/zammad.conf
 
   echo "===> Starting postfix...."
-  service postfix start
+  exec service postfix start
   echo "===> Starting nginx...."
-  service nginx start
+  exec service nginx start
 
   # set user & group to zammad
   chown -R zammad:zammad "${ZAMMAD_DIR}"

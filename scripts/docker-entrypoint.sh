@@ -50,9 +50,9 @@ if [ "$1" = 'zammad' ]; then
   sed -e "s#.*server_name.*#    server_name ${ZAMMAD_URL};#" < ${ZAMMAD_DIR}/contrib/nginx/zammad.conf > /etc/nginx/sites-enabled/zammad.conf
 
   echo "===> Starting postfix...."
-  exec service postfix start
+  service postfix start
   echo "===> Starting nginx...."
-  exec service nginx start
+  service nginx start
 
   # set user & group to zammad
   chown -R zammad:zammad "${ZAMMAD_DIR}"

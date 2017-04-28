@@ -27,8 +27,8 @@ if [ "$1" = 'zammad' ]; then
     # populate database
     echo "==> Running db:migrate..."
     bundle exec rake db:migrate
-    echo "==> Running db:seed..."
-    bundle exec rake db:seed
+    # echo "==> Running db:seed..."
+    # bundle exec rake db:seed
 
     # assets precompile
     echo "==> Running assets:precompile..."

@@ -31,8 +31,8 @@ if [ "$1" = 'zammad' ]; then
     # bundle exec rake db:seed
 
     # assets precompile
-    echo "==> Running assets:precompile..."
-    bundle exec rake assets:precompile
+    #echo "==> Running assets:precompile..."
+    #bundle exec rake assets:precompile
 
     # delete assets precompile cache
     rm -r tmp/cache

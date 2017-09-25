@@ -1,4 +1,5 @@
-FROM ruby:2.3.1
+#FROM ruby:2.3.1
+FROM ruby:2.4.1
 MAINTAINER Zammad.org <info@zammad.org>
 ARG BUILD_DATE
 

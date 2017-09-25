@@ -32,8 +32,5 @@ RUN rm -rf /var/lib/apt/lists/* preseed.txt
 # docker init
 COPY scripts/docker-entrypoint.sh /
 RUN chown zammad:zammad /docker-entrypoint.sh;chmod +x /docker-entrypoint.sh
-WORKDIR ${ZAMMAD_DIR}
-RUN bundle exec rake assets:precompile
-WORKDIR /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["zammad"]

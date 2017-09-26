@@ -30,9 +30,6 @@ if [ "$1" = 'zammad' ]; then
     # echo "==> Running db:seed..."
     # bundle exec rake db:seed
 
-    echo "==> Set es_url (elasticsearch)"
-    bundle exec rails r "Setting.set('es_url', 'http://${ZAMMAD_ES_URL}:9200')"
-
     # assets precompile
     echo "==> Running assets:precompile..."
     bundle exec rake assets:precompile
